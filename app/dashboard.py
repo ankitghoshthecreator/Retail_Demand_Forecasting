@@ -80,9 +80,18 @@ def load_data():
 @st.cache_resource
 def load_model_cached():
     model = XGBRegressor()
-    if not os.path.exists(PATHS["model"]):
+    # Check if exists and is non-empty
+    if not os.path.exists(PATHS["model"]) or os.path.getsize(PATHS["model"]) == 0:
+        st.info("📦 Initializing model for the first time...")
         build_pipeline_cached()
-    model.load_model(PATHS["model"])
+    
+    try:
+        model.load_model(PATHS["model"])
+    except Exception as e:
+        st.warning(f"🔄 Model file corrupted, retraining: {e}")
+        build_pipeline_cached()
+        model.load_model(PATHS["model"])
+        
     return model
 
 # ---------- BUSINESS LOGIC ----------
