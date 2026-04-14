@@ -28,11 +28,10 @@ def get_paths():
 
 PATHS = get_paths()
 
-# ---------- CACHED DATA PIPELINE ----------
+# ---------- DATA PIPELINE ----------
 
-@st.cache_data(show_spinner="Building Data Pipeline...")
-def build_pipeline_cached():
-    """Initialize data and train model if missing."""
+def build_pipeline_no_cache():
+    """Initialize data and train model. No cache to allow 'healing'."""
     from src.data_loader import DataLoader
     from src.feature_engineering import FeatureEngineering
 
@@ -74,7 +73,7 @@ def build_pipeline_cached():
 @st.cache_data
 def load_data():
     if not os.path.exists(PATHS["processed"]) or not os.path.exists(PATHS["model"]):
-        return build_pipeline_cached()
+        return build_pipeline_no_cache()
     return pd.read_csv(PATHS["processed"], parse_dates=["date"])
 
 @st.cache_resource
@@ -82,14 +81,13 @@ def load_model_cached():
     model = XGBRegressor()
     # Check if exists and is non-empty
     if not os.path.exists(PATHS["model"]) or os.path.getsize(PATHS["model"]) == 0:
-        st.info("📦 Initializing model for the first time...")
-        build_pipeline_cached()
+        build_pipeline_no_cache()
     
     try:
         model.load_model(PATHS["model"])
     except Exception:
         # Silent healing: retrain without showing technical warnings
-        build_pipeline_cached()
+        build_pipeline_no_cache()
         model.load_model(PATHS["model"])
         
     return model
