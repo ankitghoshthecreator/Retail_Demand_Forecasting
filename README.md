@@ -77,3 +77,32 @@ SRR-DFS solves these issues using data-driven forecasting and automated reorder 
 
 ## Project Structure
 
+```text
+├── .streamlit/          # Streamlit theme and config
+├── app/                 # Dashboard logic and components
+├── data/                # Raw and processed datasets (CSV)
+├── database/            # Supabase interaction logic
+├── models/              # Serialized ML models (joblib)
+├── src/                 # Core engine (forecasting, feature eng)
+├── streamlit_app.py     # Main deployment entry point
+└── requirements.txt     # Dependency specifications
+```
+
+---
+
+## Deployment Guide
+
+### Local Running
+1. Install dependencies: `pip install -r requirements.txt`
+2. Launch the application: `.\run.ps1`
+   *(Or manual: `streamlit run streamlit_app.py`)*
+
+### Streamlit Cloud / Deployment
+- Link your GitHub repository to [Streamlit Cloud](https://streamlit.io/cloud).
+- Point the main file path to `streamlit_app.py`.
+- Configure any required secrets in the Streamlit Cloud dashboard if using a database.
+
+---
+
+## License
+MIT License
