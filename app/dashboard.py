@@ -22,7 +22,7 @@ def get_paths():
     
     return {
         "processed": os.path.join(processed_dir, "featured_data.csv"),
-        "model": os.path.join(model_dir, "xgb_model.pkl"),
+        "model": os.path.join(model_dir, "xgb_model.json"),
         "raw": os.path.join(data_dir, "raw", "sales_data.csv")
     }
 
@@ -87,8 +87,8 @@ def load_model_cached():
     
     try:
         model.load_model(PATHS["model"])
-    except Exception as e:
-        st.warning(f"🔄 Model file corrupted, retraining: {e}")
+    except Exception:
+        # Silent healing: retrain without showing technical warnings
         build_pipeline_cached()
         model.load_model(PATHS["model"])
         
